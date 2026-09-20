@@ -23,7 +23,7 @@ RUN dotnet publish "LicensePlatform.Api.csproj" -c Release -o /app/publish /p:Us
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 
 ENV ASPNETCORE_URLS=http://+:8080
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
