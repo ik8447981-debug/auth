@@ -16,17 +16,12 @@ services:
         value: LicensePlatform
       - key: JwtSettings__Audience
         value: LicensePlatformApp
+      - key: AdminSettings__DefaultUsername
+        value: admin
+      - key: AdminSettings__DefaultPassword
+        value: admin123
     healthCheckPath: /health
     autoDeploy: true
-
-  - type: web
-    name: license-admin
-    runtime: static
-    staticPublishPath: ./admin-panel/dist
-    buildCommand: cd admin-panel && npm install && npm run build
-    envVars:
-      - key: VITE_API_URL
-        value: https://license-api.onrender.com
 
   - type: postgresql
     name: license-platform-db
