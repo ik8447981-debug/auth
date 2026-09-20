@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: license-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        fromDatabase:
+          name: license-platform-db
+          property: connectionString
+      - key: JwtSettings__SecretKey
+        generateValue: true
+      - key: JwtSettings__Issuer
+        value: LicensePlatform
+      - key: JwtSettings__Audience
+        value: LicensePlatformApp
+    healthCheckPath: /health
+    autoDeploy: true
+
+  - type: web
+    name: license-admin
+    runtime: static
+    staticPublishPath: ./admin-panel/dist
+    buildCommand: cd admin-panel && npm install && npm run build
+    envVars:
+      - key: VITE_API_URL
+        value: https://license-api.onrender.com
+
+  - type: postgresql
+    name: license-platform-db
+    databaseName: license_platform
+    plan: free
