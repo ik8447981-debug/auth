@@ -1,0 +1,26 @@
+﻿{
+    "type": "web_service",
+    "name": "license-api",
+    "ownerId": "tea-dao0vf740ujc73dgj8h0",
+    "repo": "https://github.com/ik8447981-debug/auth",
+    "branch": "main",
+    "autoDeploy": "yes",
+    "serviceDetails": {
+        "runtime": "docker",
+        "plan": "free",
+        "region": "oregon",
+        "healthCheckPath": "/health",
+        "envSpecificDetails": {
+            "dockerfilePath": "./Dockerfile",
+            "dockerContext": "."
+        }
+    },
+    "envVars": [
+        {"key": "ASPNETCORE_ENVIRONMENT", "value": "Production"},
+        {"key": "JwtSettings__Issuer", "value": "LicensePlatform"},
+        {"key": "JwtSettings__Audience", "value": "LicensePlatformApp"},
+        {"key": "JwtSettings__SecretKey", "value": "b0d56af1fd784a378de834816258b419251fb01f36a647d1b182eb707e9fa63a"},
+        {"key": "AdminSettings__DefaultUsername", "value": "admin"},
+        {"key": "AdminSettings__DefaultPassword", "value": "admin123"}
+    ]
+}
