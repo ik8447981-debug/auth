@@ -40,7 +40,7 @@ namespace LicensePlatform.Application.Services
                 ActorName = actorName ?? "System",
                 IpAddress = ipAddress ?? string.Empty,
                 Result = result ?? string.Empty,
-                Metadata = metadata,
+                Metadata = metadata ?? string.Empty,
                 Timestamp = DateTime.UtcNow
             };
 
