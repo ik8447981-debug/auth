@@ -31,8 +31,7 @@ namespace LicensePlatform.Infrastructure.Data.Configurations
             builder.Property(a => a.Role)
                 .IsRequired()
                 .HasConversion<string>()
-                .HasMaxLength(50)
-                .HasDefaultValue(AdminRole.Viewer);
+                .HasMaxLength(50);
 
             builder.Property(a => a.IsActive)
                 .HasDefaultValue(true);

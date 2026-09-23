@@ -160,6 +160,7 @@ public static class ServiceCollectionExtensions
     {
         using var scope = serviceProvider.CreateScope();
         var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<LicensePlatformDbContext>();
 
         var superAdminUsername = configuration["SeedData:SuperAdmin:Username"] ?? "admin";
         var superAdminEmail = configuration["SeedData:SuperAdmin:Email"] ?? "admin@licenseplatform.com";
@@ -167,6 +168,20 @@ public static class ServiceCollectionExtensions
 
         try
         {
+            var existingAdmin = dbContext.AdminUsers
+                .FirstOrDefault(a => a.Username.ToLower() == superAdminUsername.ToLower());
+
+            if (existingAdmin != null)
+            {
+                if (existingAdmin.Role != Domain.Enums.AdminRole.SuperAdmin)
+                {
+                    existingAdmin.Role = Domain.Enums.AdminRole.SuperAdmin;
+                    dbContext.SaveChanges();
+                }
+
+                return;
+            }
+
             var request = new LicensePlatform.Shared.DTOs.Requests.AdminCreateRequest
             {
                 Username = superAdminUsername,
