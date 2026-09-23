@@ -5,6 +5,7 @@ using LicensePlatform.Application.Interfaces;
 using LicensePlatform.Application.Services;
 using LicensePlatform.Infrastructure.Data;
 using LicensePlatform.Infrastructure.Repositories;
+using LicensePlatform.Security.DeviceFingerprint;
 using LicensePlatform.Security.LicenseGeneration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -110,6 +111,7 @@ public static class ServiceCollectionExtensions
                 tokenExpirationMinutes);
         });
         services.AddScoped<ILicenseKeyGenerator, LicenseKeyGenerator>();
+        services.AddSingleton<IDeviceFingerprintService, DeviceFingerprintService>();
 
         // ── Filters ───────────────────────────────────────────────────────────
         services.AddScoped<ApiKeyAuthFilter>();
