@@ -23,16 +23,26 @@ namespace LicensePlatform.Application.Services
         private readonly IAuditService _auditService;
         private readonly string _jwtSecret;
         private readonly int _tokenExpirationMinutes;
+        private readonly string _jwtIssuer;
+        private readonly string _jwtAudience;
 
         private static readonly Dictionary<string, (int Count, DateTime WindowStart)> _failedAttempts = new();
         private static readonly object _lock = new();
 
-        public AuthService(LicensePlatformDbContext context, IAuditService auditService, string jwtSecret, int tokenExpirationMinutes = 60)
+        public AuthService(
+            LicensePlatformDbContext context,
+            IAuditService auditService,
+            string jwtSecret,
+            int tokenExpirationMinutes = 60,
+            string issuer = "LicensePlatform",
+            string audience = "LicensePlatformApp")
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _auditService = auditService ?? throw new ArgumentNullException(nameof(auditService));
             _jwtSecret = jwtSecret ?? throw new ArgumentNullException(nameof(jwtSecret));
             _tokenExpirationMinutes = tokenExpirationMinutes;
+            _jwtIssuer = issuer;
+            _jwtAudience = audience;
         }
 
         public AdminLoginResponse Login(AdminLoginRequest request)
@@ -343,8 +353,8 @@ namespace LicensePlatform.Application.Services
             };
 
             var token = new JwtSecurityToken(
-                issuer: null,
-                audience: null,
+                issuer: _jwtIssuer,
+                audience: _jwtAudience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(_tokenExpirationMinutes),
                 signingCredentials: credentials);

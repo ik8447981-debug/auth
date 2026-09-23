@@ -103,12 +103,16 @@ public static class ServiceCollectionExtensions
             var jwtSecret = configuration["JwtSettings:SecretKey"]
                 ?? throw new InvalidOperationException("JwtSettings:SecretKey is not configured.");
             var tokenExpirationMinutes = configuration.GetValue("JwtSettings:ExpirationMinutes", 1440);
+            var issuer = configuration["JwtSettings:Issuer"] ?? "LicensePlatform";
+            var audience = configuration["JwtSettings:Audience"] ?? "LicensePlatformApp";
 
             return new AuthService(
                 serviceProvider.GetRequiredService<LicensePlatformDbContext>(),
                 serviceProvider.GetRequiredService<IAuditService>(),
                 jwtSecret,
-                tokenExpirationMinutes);
+                tokenExpirationMinutes,
+                issuer,
+                audience);
         });
         services.AddScoped<ILicenseKeyGenerator, LicenseKeyGenerator>();
         services.AddSingleton<IDeviceFingerprintService, DeviceFingerprintService>();
