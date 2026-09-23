@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import type { User, LoginResponse } from '@/types';
+import type { User } from '@/types';
+import { login as loginRequest } from '@/lib/api';
 
 interface AuthContextType {
   user: User | null;
@@ -67,22 +68,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [token, user]);
 
   const login = useCallback(async (username: string, password: string) => {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Login failed' }));
-      throw new Error(error.message || 'Login failed');
+    try {
+      const data = await loginRequest({ username, password });
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('auth_user', JSON.stringify(data.user));
+      setToken(data.token);
+      setUser(data.user);
+    } catch {
+      throw new Error('Invalid username or password.');
     }
-
-    const data: LoginResponse = await response.json();
-    localStorage.setItem('auth_token', data.token);
-    localStorage.setItem('auth_user', JSON.stringify(data.user));
-    setToken(data.token);
-    setUser(data.user);
   }, []);
 
   const logout = useCallback(() => {

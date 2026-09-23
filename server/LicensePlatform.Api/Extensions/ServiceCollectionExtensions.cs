@@ -96,7 +96,19 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILicensePlanService, LicensePlanService>();
         services.AddScoped<IAnalyticsService, AnalyticsService>();
         services.AddScoped<IAuditService, AuditService>();
-        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAuthService>(serviceProvider =>
+        {
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            var jwtSecret = configuration["JwtSettings:SecretKey"]
+                ?? throw new InvalidOperationException("JwtSettings:SecretKey is not configured.");
+            var tokenExpirationMinutes = configuration.GetValue("JwtSettings:ExpirationMinutes", 1440);
+
+            return new AuthService(
+                serviceProvider.GetRequiredService<LicensePlatformDbContext>(),
+                serviceProvider.GetRequiredService<IAuditService>(),
+                jwtSecret,
+                tokenExpirationMinutes);
+        });
         services.AddScoped<ILicenseKeyGenerator, LicenseKeyGenerator>();
 
         // ── Filters ───────────────────────────────────────────────────────────

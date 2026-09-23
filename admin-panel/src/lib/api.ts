@@ -21,8 +21,10 @@ import type {
   LicenseValidation,
 } from '@/types';
 
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? '';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: `${apiBaseUrl}/api/v1/admin`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -161,13 +163,13 @@ export async function resetDevice(id: string): Promise<void> {
 }
 
 // Analytics
-export async function getAnalytics(params?: { startDate?: string; endDate?: string; productId?: string }): Promise<AnalyticsData> {
-  const response = await api.get<AnalyticsData>('/analytics', { params });
+export async function getAnalytics(_params?: { startDate?: string; endDate?: string; productId?: string }): Promise<AnalyticsData> {
+  const response = await api.get<AnalyticsData>('/analytics/global');
   return response.data;
 }
 
 export async function getProductAnalytics(productId: string): Promise<AnalyticsData> {
-  const response = await api.get<AnalyticsData>(`/analytics/products/${productId}`);
+  const response = await api.get<AnalyticsData>(`/analytics/product/${productId}`);
   return response.data;
 }
 
@@ -184,17 +186,17 @@ export async function getAuditLogs(filter?: AuditLogFilter): Promise<PaginatedRe
 
 // Plans
 export async function getPlans(productId: string): Promise<Plan[]> {
-  const response = await api.get<Plan[]>(`/products/${productId}/plans`);
+  const response = await api.get<Plan[]>(`/plans/product/${productId}`);
   return response.data;
 }
 
-export async function createPlan(productId: string, data: Omit<Plan, 'id' | 'productId' | 'createdAt'>): Promise<Plan> {
-  const response = await api.post<Plan>(`/products/${productId}/plans`, data);
+export async function createPlan(_productId: string, data: Omit<Plan, 'id' | 'productId' | 'createdAt'>): Promise<Plan> {
+  const response = await api.post<Plan>('/plans', data);
   return response.data;
 }
 
-export async function updatePlan(productId: string, planId: string, data: Partial<Plan>): Promise<Plan> {
-  const response = await api.put<Plan>(`/products/${productId}/plans/${planId}`, data);
+export async function updatePlan(_productId: string, planId: string, data: Partial<Plan>): Promise<Plan> {
+  const response = await api.put<Plan>(`/plans/${planId}`, data);
   return response.data;
 }
 
